@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/mihailvasilev/Desktop/ /ВУЗ/Учебная практика /Код",
+      "program": "/Users/mihailvasilev/Desktop/ /ВУЗ/Учебная практика /Код/build/Debug/outDebug"
+    }
+  ]
+}
