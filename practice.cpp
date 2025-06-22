@@ -2,19 +2,14 @@
 #include <string>
 #include <vector>
 
-
 using namespace std;
 
 string checkMusor(string str)
 {
-    for (int i = 0; i < str.size(); i++) //проверка на мусор
+    for (int i = 0; i < str.size(); i++)
     {
-        if (isdigit(str[i]) || str[i] == '+' || str[i] == '-' ||
-            str[i] == '(' || str[i] == ')' || str[i] == '/' || str[i] == '*' || str[i] == '.')
-        {
-            continue;
-        }
-        else
+        if (!(isdigit(str[i]) || str[i] == '+' || str[i] == '-' ||
+            str[i] == '(' || str[i] == ')' || str[i] == '/' || str[i] == '*' || str[i] == '.'))
         {
             str.erase(i, 1);
         }
@@ -25,25 +20,22 @@ string checkMusor(string str)
 bool checkSyntax(string str)
 {
     bool a = true;
-    if (str[0] == '/' || str[0] == '*' || str[0] == ')')//проверка на начало 
+    if (str[0] == '/' || str[0] == '*' || str[0] == ')')
     {
-        cout << "START";
         a = false;
     }
-    if (str[str.size() - 1] != ')' && !isdigit(str[str.size() - 1]))//проверка на начало
+    if (str[str.size() - 1] != ')' && !isdigit(str[str.size() - 1]))
     {
-        cout << "FIN";
         a = false;
     }
     vector<int> pravSkobok;
     vector<int> levSkobok;
-    for (int i = 0; i < str.size(); i++) //проверка синтаксис
+    for (int i = 0; i < str.size(); i++)
     {
         if (str[i] == '*' || str[i] == '/' || str[i] == '+' || str[i] == '-')
         {
             if (str[i + 1] == '*' || str[i + 1] == '/' || str[i + 1] == '+')
             {
-                cout << "LOL";
                 a = false;
             }
         }
@@ -56,7 +48,7 @@ bool checkSyntax(string str)
             pravSkobok.push_back(i);
         }
     }
-    if (levSkobok.size() != pravSkobok.size()) //проверка на кол-во скобок
+    if (levSkobok.size() != pravSkobok.size())
     {
         a = false;
     }
@@ -73,12 +65,12 @@ bool checkSyntax(string str)
                 {
                     if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
                     {
-                        index = pravSkobok[0] - levSkobok[j]; // )()()(
+                        index = pravSkobok[0] - levSkobok[j];
                         min = j;
 
                     }
                 }
-                levSkobok.erase(levSkobok.begin()+min);
+                levSkobok.erase(levSkobok.begin() + min);
                 pravSkobok.erase(pravSkobok.begin());
                 min = 0;
                 if (levSkobok.empty())
@@ -96,8 +88,6 @@ bool checkSyntax(string str)
     return a;
 }
 
-
-
 double resSkobok(string copyStr)
 {
     double perRes;
@@ -111,8 +101,8 @@ double resSkobok(string copyStr)
     }
     for (int i = 0; i < copyStr.size(); i++)
     {
-        
-        if (isdigit(copyStr[i]) || copyStr[i] == '.' )
+
+        if (isdigit(copyStr[i]) || copyStr[i] == '.')
         {
             perem += copyStr[i];
         }
@@ -167,7 +157,6 @@ double resSkobok(string copyStr)
                 perem = "-";
                 i++;
             }
-            
         }
         else if (copyStr[i] == '+') {
             znak = "+";
@@ -180,11 +169,8 @@ double resSkobok(string copyStr)
     }
     return perRes;
 }
-
-
 string resDelumn(string copyStr)
 {
-    int j = 0;
     string umn = "";
     string perRes;
     int nachalo = 0;
@@ -193,8 +179,7 @@ string resDelumn(string copyStr)
     {
         if (copyStr[i] == '*' || copyStr[i] == '/')
         {
-            j = i;
-            for (int k = j + 1; k < copyStr.size() + 1; k++)
+            for (int k = i + 1; k < copyStr.size() + 1; k++)
             {
                 if (isdigit(copyStr[k]) || copyStr[k] == '.' || copyStr[k] == '-')
                 {
@@ -207,7 +192,7 @@ string resDelumn(string copyStr)
                 }
             }
             umn = copyStr[i] + umn;
-            for (int k = j - 1; k >= 0; k--)
+            for (int k = i - 1; k >= 0; k--)
             {
                 if (isdigit(copyStr[k]) || copyStr[k] == '.')
                 {
@@ -227,25 +212,18 @@ string resDelumn(string copyStr)
             umn = "";
             i = 0;
         }
-
-
-
-
     }
     return copyStr;
 }
 
-
 string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
 {
     str = '(' + str + ')';
-    int razmer;
     for (int i = 0; i < str.size(); i++)
     {
         if (str[i] == '(') levSkobok.push_back(i);
         if (str[i] == ')') pravSkobok.push_back(i);
     }
-    razmer = levSkobok.size();
     int min;
     int index = 999;
     bool p = true;
@@ -255,19 +233,19 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
         {
             if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
             {
-                index = pravSkobok[0]-levSkobok[j];
+                index = pravSkobok[0] - levSkobok[j];
                 min = levSkobok[j];
             }
         }
-        
+
         string copyStr = ""; //((34564) + ()  )
-        for (int k = min+1; k < pravSkobok[0]; k++)
+        for (int k = min + 1; k < pravSkobok[0]; k++)
         {
             copyStr += str[k];
-        } 
-        
-        double skobka=resSkobok(resDelumn(copyStr));
-        str.erase(min, pravSkobok[0] - min+1);
+        }
+
+        double skobka = resSkobok(resDelumn(copyStr));
+        str.erase(min, pravSkobok[0] - min + 1);
         str.insert(min, to_string(skobka));
         levSkobok.clear();
         pravSkobok.clear();
@@ -277,7 +255,7 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
             if (str[l] == ')') pravSkobok.push_back(l);
         }
         index = 999;
-        if (levSkobok.size() ==0)
+        if (levSkobok.size() == 0)
         {
             p = false;
         }
@@ -289,31 +267,44 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
 // -(10 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))
 int main()
 {
-    int i = -1;
-
     vector<int> pravSkobok;
     vector<int> levSkobok;
-    string str = "-(20 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))";
+    string str;
 
-    str = checkMusor(str);
-    if (checkSyntax(str) == false)
+    while (true)
     {
-        cout << "ERROR\n";
+        cout << "Пользователь вводит с клавиатуры некоторое арифметическое выражение. Выражение может содержать: Начальный уровень: +, -, *, /. Например, если пользователь ввел: 5+2*2. Результат: 9.Средний уровень: (), +, -, *, /. Приложение рассчитывает результат выражения с учетом скобок, приоритетов операторов. " << endl;
+        cout << "====МЕНЮ====" << endl;
+        cout << "1.Ввод выражения" << endl;
+        cout << "2.Вывод результата " << endl;
+        cout << "3.Результаты тестирования " << endl;
+        cout << "4.Выход " << endl;
+        int viborMenu;
+        cout << "Ваш выбор: ";
+        cin >> viborMenu;
+        if (viborMenu == 1)
+        {
+            cout << "Введите выражение: ";
+            cin >> str;
+            str = checkMusor(str);
+            if (checkSyntax(str) == false)
+            {
+                cout << "Ошибка синтаксиса\n";
+            }
+        }
+        else if (viborMenu == 2)
+        {
+            cout << "Выражение: " << str << endl;
+            cout << "Результат: " << logic(str, pravSkobok, levSkobok) << endl;
+        }
+        else if (viborMenu == 3)
+        {
+            //тесты
+        }
+        else if (viborMenu == 4)
+        {
+            break;
+        }
     }
-    else
-    {
-        cout << logic(str, pravSkobok, levSkobok);
-    }
-;
     return 0;
 }
-// в функции resSkobok вызываем функцию resDelUmn 
-// которая будет отдельно искать умножение или деление 
-// решать его, и возвращать результат 
-// пример
-// исходная -(10 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))
-// которая пойдет в resSkobok (98 - 140 * 50) 
-// которая пойдет в resdelumn 140 * 50
-// вернет в эту же строку (98 - 7000)
-
-// *** в функции resdelumn вызывать снова функцию resSkobok
