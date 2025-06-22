@@ -35,8 +35,8 @@ bool checkSyntax(string str)
         cout << "FIN";
         a = false;
     }
-    int levSkobka = 0;
-    int pravSkobka = 0;
+    vector<int> pravSkobok;
+    vector<int> levSkobok;
     for (int i = 0; i < str.size(); i++) //проверка синтаксис
     {
         if (str[i] == '*' || str[i] == '/' || str[i] == '+' || str[i] == '-')
@@ -49,26 +49,50 @@ bool checkSyntax(string str)
         }
         if (str[i] == '(')
         {
-            levSkobka++;
+            levSkobok.push_back(i);
         }
         if (str[i] == ')')
         {
-            pravSkobka++;
+            pravSkobok.push_back(i);
         }
     }
-    if (levSkobka != pravSkobka) //проверка на кол-во скобок
+    if (levSkobok.size() != pravSkobok.size()) //проверка на кол-во скобок
     {
         a = false;
     }
-
-    for (int i = 0; i < str.size(); i++) //проверка на порядок скобок
+    else
     {
+        if (levSkobok.size() > 0)
+        {
+            int min;
+            int index = 999;
+            bool p = true;
+            while (p)
+            {
+                for (int j = 0; j < pravSkobok.size(); j++)
+                {
+                    if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
+                    {
+                        index = pravSkobok[0] - levSkobok[j]; // )()()(
+                        min = j;
 
-        if (str.find_first_of('(', i) > str.find_first_of(')', i)) a = false;
-        else i = str.find_first_of(')', i);
-        if (levSkobka == 0) i = str.size();
+                    }
+                }
+                levSkobok.erase(levSkobok.begin()+min);
+                pravSkobok.erase(pravSkobok.begin());
+                min = 0;
+                if (levSkobok.empty())
+                {
+                    p = false;
+                }
+
+            }
+            if (!(pravSkobok.empty() && levSkobok.empty()))
+            {
+                a = false;
+            }
+        }
     }
-
     return a;
 }
 
@@ -77,15 +101,18 @@ bool checkSyntax(string str)
 double resSkobok(string copyStr)
 {
     double perRes;
-    string znak;
+    string znak = "";
     string perem;
-
     copyStr.push_back('!');
-
-
+    if (copyStr[0] == '-')
+    {
+        perem += '-';
+        copyStr.erase(0, 1);
+    }
     for (int i = 0; i < copyStr.size(); i++)
     {
-        if (isdigit(copyStr[i]) || copyStr[i] == '.')
+        
+        if (isdigit(copyStr[i]) || copyStr[i] == '.' )
         {
             perem += copyStr[i];
         }
@@ -102,7 +129,12 @@ double resSkobok(string copyStr)
             }
             else if (znak == "+") {
                 perRes = perRes + stod(perem);
-                znak = "";
+                if (copyStr[i + 1] == '-')
+                {
+                    perem = "-";
+                    i++;
+                }
+                znak = "+";
             }
             else if (znak == "-") {
                 perRes = perRes - stod(perem);
@@ -127,9 +159,24 @@ double resSkobok(string copyStr)
                 i++;
             }
         }
-        else if (copyStr[i] == '-') znak = "-";
-        else if (copyStr[i] == '+') znak = "+";
-
+        else if (copyStr[i] == '-')
+        {
+            znak = "-";
+            if (copyStr[i + 1] == '-')
+            {
+                perem = "-";
+                i++;
+            }
+            
+        }
+        else if (copyStr[i] == '+') {
+            znak = "+";
+            if (copyStr[i + 1] == '-')
+            {
+                perem = "-";
+                i++;
+            }
+        }
     }
     return perRes;
 }
@@ -149,7 +196,7 @@ string resDelumn(string copyStr)
             j = i;
             for (int k = j + 1; k < copyStr.size() + 1; k++)
             {
-                if (isdigit(copyStr[k]) || copyStr[k] == '.')
+                if (isdigit(copyStr[k]) || copyStr[k] == '.' || copyStr[k] == '-')
                 {
                     umn = umn + copyStr[k];
                 }
@@ -191,6 +238,7 @@ string resDelumn(string copyStr)
 
 string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
 {
+    str = '(' + str + ')';
     int razmer;
     for (int i = 0; i < str.size(); i++)
     {
@@ -200,25 +248,26 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
     razmer = levSkobok.size();
     int min;
     int index = 999;
-    for (int i = 0; i < levSkobok.size(); i++)
+    bool p = true;
+    while (p)
     {
         for (int j = 0; j < pravSkobok.size(); j++)
         {
-            if (pravSkobok[i] - levSkobok[j] < index && pravSkobok[i] - levSkobok[j] > 0)
+            if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
             {
-                index = pravSkobok[i] - levSkobok[j];
+                index = pravSkobok[0]-levSkobok[j];
                 min = levSkobok[j];
             }
         }
-
+        
         string copyStr = ""; //((34564) + ()  )
-        for (int k = min + 1; k < pravSkobok[i]; k++)
+        for (int k = min+1; k < pravSkobok[0]; k++)
         {
             copyStr += str[k];
-        }
-
-        double skobka = resSkobok(resDelumn(copyStr));
-        str.erase(min, pravSkobok[i] - min + 1);
+        } 
+        
+        double skobka=resSkobok(resDelumn(copyStr));
+        str.erase(min, pravSkobok[0] - min+1);
         str.insert(min, to_string(skobka));
         levSkobok.clear();
         pravSkobok.clear();
@@ -227,12 +276,10 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
             if (str[l] == '(') levSkobok.push_back(l);
             if (str[l] == ')') pravSkobok.push_back(l);
         }
-        if (levSkobok.size() == 1)
+        index = 999;
+        if (levSkobok.size() ==0)
         {
-            str.erase(0, 1);
-            str.erase(str.size() - 1, 1);
-            skobka = resSkobok(resDelumn(str));
-            str = to_string(skobka);
+            p = false;
         }
     }
     return str;
@@ -246,20 +293,18 @@ int main()
 
     vector<int> pravSkobok;
     vector<int> levSkobok;
-
-
-
-    string str = "((15 + 450)/10";
+    string str = "-(20 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))";
 
     str = checkMusor(str);
-    if (checkSyntax(str) != 1)
+    if (checkSyntax(str) == false)
     {
-        cout << "Ошибка";
+        cout << "ERROR\n";
     }
     else
     {
         cout << logic(str, pravSkobok, levSkobok);
     }
+;
     return 0;
 }
 // в функции resSkobok вызываем функцию resDelUmn 
