@@ -211,7 +211,16 @@ string resDelumn(string copyStr)
         }
         if (umn != "")
         {
-            if (umn[umn.size() - 1] == '0' && umn[umn.size() - 2] == '/')
+            int znakPos = 0;
+            for (int k = 0; k < umn.size() + 1; k++)
+            {
+                if (umn[k] == '/')
+                {
+                    znakPos = k;
+                    k = umn.size();
+                }
+            }
+            if (umn[znakPos + 1] == '0' && umn[znakPos] == '/')
             {
                 cout << "Деление на 0 невозможно!\n";
                 cout << "Один из этапов вычисления: " << umn << endl;
@@ -360,7 +369,6 @@ TEST(CalculatorTest, LogicTest) {
 int main()
 {
     setlocale(LC_ALL, "Rus");
-
     vector<int> pravSkobok;
     vector<int> levSkobok;
     string str;
