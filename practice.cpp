@@ -165,7 +165,7 @@ void logic(string str,vector<int> &pravSkobok,vector<int> &levSkobok,string &fin
 
 }
 
-// -(10 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))
+// -(10 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))    
 int main()
 {
     int i = -1;
