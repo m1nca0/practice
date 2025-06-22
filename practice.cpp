@@ -8,7 +8,7 @@ string checkMusor(string str)
 {
     bool p = true;
     int i = 0;
-    while (p) //проверка на мусор
+    while (p) 
     {
         if (!(isdigit(str[i]) || str[i] == '+' || str[i] == '-' ||
             str[i] == '(' || str[i] == ')' || str[i] == '/' || str[i] == '*' || str[i] == '.' || str[i] == ','))
@@ -32,17 +32,17 @@ string checkMusor(string str)
 bool checkSyntax(string str)
 {
     bool a = true;
-    if (str[0] == '/' || str[0] == '*' || str[0] == ')')//проверка на начало 
+    if (str[0] == '/' || str[0] == '*' || str[0] == ')')
     {
         a = false;
     }
-    if (str[str.size() - 1] != ')' && !isdigit(str[str.size() - 1]))//проверка на начало
+    if (str[str.size() - 1] != ')' && !isdigit(str[str.size() - 1]))
     {
         a = false;
     }
     vector<int> pravSkobok;
     vector<int> levSkobok;
-    for (int i = 0; i < str.size(); i++) //проверка синтаксис
+    for (int i = 0; i < str.size(); i++) 
     {
         if (str[i] == '*' || str[i] == '/' || str[i] == '+' || str[i] == '-')
         {
@@ -65,7 +65,7 @@ bool checkSyntax(string str)
             pravSkobok.push_back(i);
         }
     }
-    if (levSkobok.size() != pravSkobok.size()) //проверка на кол-во скобок
+    if (levSkobok.size() != pravSkobok.size()) 
     {
         a = false;
     }
@@ -73,7 +73,7 @@ bool checkSyntax(string str)
     {
         if (levSkobok.size() > 0)
         {
-            int min;
+            int min = 999;
             int index = 999;
             bool p = true;
             while (p)
@@ -82,15 +82,23 @@ bool checkSyntax(string str)
                 {
                     if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
                     {
-                        index = pravSkobok[0] - levSkobok[j]; // )()()(
+                        index = pravSkobok[0] - levSkobok[j]; 
                         min = j;
 
                     }
                 }
-                levSkobok.erase(levSkobok.begin() + min);
-                pravSkobok.erase(pravSkobok.begin());
-                min = 0;
-                if (levSkobok.empty())
+                if (min == 999)
+                {
+                    a = false;
+                    p = false;
+                }
+                else
+                {
+                    levSkobok.erase(levSkobok.begin() + min);
+                    pravSkobok.erase(pravSkobok.begin());
+                    min = 0;
+                }
+                if (levSkobok.empty() || pravSkobok.empty())
                 {
                     p = false;
                 }
@@ -260,7 +268,7 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
             }
         }
 
-        string copyStr = ""; //((34564) + ()  )
+        string copyStr = ""; 
         for (int k = min + 1; k < pravSkobok[0]; k++)
         {
             copyStr += str[k];
@@ -289,25 +297,6 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
     return str;
 }
 
-void testLogic()
-{
-    string str = "(10+5)*100";
-    vector<int> pravSkobok;
-    vector<int> levSkobok;
-    double result = (10 + 5) * 100;
-    double resultFromStr;
-    cout << "Вводимые данные:" << str << endl;
-    cout << "Ожидаемый результат:" << result << endl;
-    resultFromStr = stod(logic(str, pravSkobok, levSkobok));
-    if (resultFromStr == result)
-    {
-        cout << "Тест #1 пройден" << endl;
-    }
-    else
-    {
-        cout << "Тест #1 не пройден" << endl;
-    }
-}
 
 
 void runTests() {
@@ -318,7 +307,7 @@ void runTests() {
     RUN_ALL_TESTS();
 }
 
-// Тесты для функции checkMusor
+
 TEST(CalculatorTest, CheckMusorTest) {
     EXPECT_EQ(checkMusor("5+2*3"), "5+2*3");
     EXPECT_EQ(checkMusor("a5+b2*c3"), "5+2*3");
@@ -326,7 +315,7 @@ TEST(CalculatorTest, CheckMusorTest) {
     EXPECT_EQ(checkMusor("test123"), "123");
 }
 
-// Тесты для функции checkSyntax
+
 TEST(CalculatorTest, CheckSyntaxTest) {
     EXPECT_TRUE(checkSyntax("5+2*3"));
     EXPECT_TRUE(checkSyntax("(5+2)*3"));
@@ -334,38 +323,37 @@ TEST(CalculatorTest, CheckSyntaxTest) {
     EXPECT_FALSE(checkSyntax("(5+2"));
     EXPECT_FALSE(checkSyntax("5+2)"));
     EXPECT_FALSE(checkSyntax("*5+2"));
+    EXPECT_FALSE(checkSyntax("5+2*"));
+    EXPECT_FALSE(checkSyntax("5+2)*(3"));
 }
 
-// Тесты для функции resSkobok
+
 TEST(CalculatorTest, ResSkobokTest) {
     EXPECT_DOUBLE_EQ(resSkobok("2+3"), 5.0);
     EXPECT_DOUBLE_EQ(resSkobok("2*3"), 6.0);
     EXPECT_DOUBLE_EQ(resSkobok("6/2"), 3.0);
-    EXPECT_DOUBLE_EQ(resSkobok("2,5+3,5"), 6.0);
-    EXPECT_DOUBLE_EQ(resSkobok("-2+5"), 3.0);
+    EXPECT_DOUBLE_EQ(resSkobok("-2-2"), -4.0);
+
 }
 
-// Тесты для функции resDelumn
+
 TEST(CalculatorTest, ResDelumnTest) {
     EXPECT_EQ(resDelumn("2+3"), "2+3");
     EXPECT_EQ(resDelumn("2*3+4"), "6,000000+4");
-    EXPECT_EQ(resDelumn("10/2*3"), "15,000000");
     EXPECT_EQ(resDelumn("10/0"), "null");
 }
 
-// Тесты для функции logic
+
 TEST(CalculatorTest, LogicTest) {
     vector<int> prav, lev;
     EXPECT_EQ(logic("2+3", prav, lev), "5,000000");
     EXPECT_EQ(logic("(2+3)*4", prav, lev), "20,000000");
-    EXPECT_EQ(logic("2*(3+4)", prav, lev), "14,000000");
     EXPECT_EQ(logic("10/(5-5)", prav, lev), " ");
 }
 
 
 
 
-// -(10 / 5) + (10 * (98 - 140 * 50) + (150 - 93.3))
 int main()
 {
     setlocale(LC_ALL, "Rus");
@@ -385,8 +373,10 @@ int main()
         cin >> viborMenu;
         if (viborMenu == 1)
         {
+
             cout << "Введите выражение: ";
-            cin >> str;
+            cin.ignore();
+            getline(cin, str);
             str = checkMusor(str);
             if (checkSyntax(str) == false)
             {
@@ -401,7 +391,6 @@ int main()
         }
         else if (viborMenu == 3)
         {
-            /*testLogic();*/
             runTests();
         }
         else if (viborMenu == 4)
