@@ -6,7 +6,7 @@ using namespace std;
 
 string checkMusor(string str)
 {
-    for (int i = 0; i < str.size(); i++)
+    for (int i = 0; i < str.size(); i++) 
     {
         if (!(isdigit(str[i]) || str[i] == '+' || str[i] == '-' ||
             str[i] == '(' || str[i] == ')' || str[i] == '/' || str[i] == '*' || str[i] == '.'))
@@ -39,6 +39,10 @@ bool checkSyntax(string str)
                 a = false;
             }
         }
+        if (str.find_first_of('--') != -1)
+        {
+            a = false;
+        }
         if (str[i] == '(')
         {
             levSkobok.push_back(i);
@@ -65,12 +69,12 @@ bool checkSyntax(string str)
                 {
                     if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
                     {
-                        index = pravSkobok[0] - levSkobok[j];
+                        index = pravSkobok[0] - levSkobok[j]; 
                         min = j;
 
                     }
                 }
-                levSkobok.erase(levSkobok.begin() + min);
+                levSkobok.erase(levSkobok.begin()+min);
                 pravSkobok.erase(pravSkobok.begin());
                 min = 0;
                 if (levSkobok.empty())
@@ -88,6 +92,16 @@ bool checkSyntax(string str)
     return a;
 }
 
+void usl(string &perem,string copyStr,int &i,string &znak,string dest)
+{
+    znak = dest;
+    if (copyStr[i + 1] == '-')
+    {
+        perem = "-";
+        i++;
+    }
+}
+
 double resSkobok(string copyStr)
 {
     double perRes;
@@ -101,8 +115,8 @@ double resSkobok(string copyStr)
     }
     for (int i = 0; i < copyStr.size(); i++)
     {
-
-        if (isdigit(copyStr[i]) || copyStr[i] == '.')
+        
+        if (isdigit(copyStr[i]) || copyStr[i] == '.' )
         {
             perem += copyStr[i];
         }
@@ -119,12 +133,12 @@ double resSkobok(string copyStr)
             }
             else if (znak == "+") {
                 perRes = perRes + stod(perem);
-                if (copyStr[i + 1] == '-')
-                {
-                    perem = "-";
-                    i++;
-                }
-                znak = "+";
+                // if (copyStr[i + 1] == '-')
+                // {
+                //     perem = "-";
+                //     i++;
+                // }
+                znak = "";
             }
             else if (znak == "-") {
                 perRes = perRes - stod(perem);
@@ -134,37 +148,17 @@ double resSkobok(string copyStr)
         }
 
         if (copyStr[i] == '*') {
-            znak = "*";
-            if (copyStr[i + 1] == '-')
-            {
-                perem = "-";
-                i++;
-            }
+            usl(perem,copyStr,i,znak,"*");
         }
         else if (copyStr[i] == '/') {
-            znak = "/";
-            if (copyStr[i + 1] == '-')
-            {
-                perem = "-";
-                i++;
-            }
+            usl(perem,copyStr,i,znak,"/");
         }
         else if (copyStr[i] == '-')
         {
-            znak = "-";
-            if (copyStr[i + 1] == '-')
-            {
-                perem = "-";
-                i++;
-            }
+            usl(perem,copyStr,i,znak,"-");
         }
         else if (copyStr[i] == '+') {
-            znak = "+";
-            if (copyStr[i + 1] == '-')
-            {
-                perem = "-";
-                i++;
-            }
+            usl(perem,copyStr,i,znak,"+");
         }
     }
     return perRes;
@@ -207,6 +201,12 @@ string resDelumn(string copyStr)
         }
         if (umn != "")
         {
+            if (umn[umn.size() - 1] == '0' && umn[umn.size() - 2] == '/')
+            {
+                cout<<"Деление на 0 невозможно!\n";
+                cout<<"Один из этапов вычисления: "<<umn<<endl;
+                return "null";
+            }
             copyStr.erase(nachalo, konec - nachalo);
             copyStr.insert(nachalo, to_string(resSkobok(umn)));
             umn = "";
@@ -233,19 +233,23 @@ string logic(string str, vector<int>& pravSkobok, vector<int>& levSkobok)
         {
             if (pravSkobok[0] - levSkobok[j] < index && pravSkobok[0] - levSkobok[j] > 0)
             {
-                index = pravSkobok[0] - levSkobok[j];
+                index = pravSkobok[0]-levSkobok[j];
                 min = levSkobok[j];
             }
         }
-
+        
         string copyStr = ""; //((34564) + ()  )
-        for (int k = min + 1; k < pravSkobok[0]; k++)
+        for (int k = min+1; k < pravSkobok[0]; k++)
         {
             copyStr += str[k];
+        } 
+        
+        if (resDelumn(copyStr) == "null")
+        {
+            return " ";
         }
-
-        double skobka = resSkobok(resDelumn(copyStr));
-        str.erase(min, pravSkobok[0] - min + 1);
+        double skobka=resSkobok(resDelumn(copyStr));
+        str.erase(min, pravSkobok[0] - min+1);
         str.insert(min, to_string(skobka));
         levSkobok.clear();
         pravSkobok.clear();
@@ -273,8 +277,8 @@ int main()
 
     while (true)
     {
-        cout << "Пользователь вводит с клавиатуры некоторое арифметическое выражение. Выражение может содержать: Начальный уровень: +, -, *, /. Например, если пользователь ввел: 5+2*2. Результат: 9.Средний уровень: (), +, -, *, /. Приложение рассчитывает результат выражения с учетом скобок, приоритетов операторов. " << endl;
-        cout << "====МЕНЮ====" << endl;
+        cout << "Пользователь вводит с клавиатуры некоторое арифметическое выражение. Выражение может содержать: Начальный уровень: +, -, *, /. Например, если пользователь ввел: 5+2*2. Результат: 9.Средний уровень: (), +, -, *, /. Приложение рассчитывает результат выражения с учетом скобок, приоритетов операторов. "<< endl;
+        cout<<"====МЕНЮ===="<<endl;
         cout << "1.Ввод выражения" << endl;
         cout << "2.Вывод результата " << endl;
         cout << "3.Результаты тестирования " << endl;
@@ -284,7 +288,7 @@ int main()
         cin >> viborMenu;
         if (viborMenu == 1)
         {
-            cout << "Введите выражение: ";
+            cout<<"Введите выражение: ";
             cin >> str;
             str = checkMusor(str);
             if (checkSyntax(str) == false)
@@ -294,8 +298,8 @@ int main()
         }
         else if (viborMenu == 2)
         {
-            cout << "Выражение: " << str << endl;
-            cout << "Результат: " << logic(str, pravSkobok, levSkobok) << endl;
+            cout<<"Выражение: " << str<<endl;
+            cout<<"Результат: " << logic(str,pravSkobok,levSkobok)<<endl;
         }
         else if (viborMenu == 3)
         {
